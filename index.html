@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Debounce&Throttle</title>
+    <style>
+        #content{
+            width: 200px;
+            height: 200px;
+            background: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="content"></div>
+    <script>
+        var content = document.getElementById("content");
+        var count = 1;
+        function getUserAction() {
+            content.innerHTML = count++;
+        }
+        //防抖
+        // content.onmousemove = debounce(getUserAction,1000,true);
+
+        //节流
+        content.onmousemove = throttle(getUserAction,1000);
+        //防抖
+        function debounce(fn, wait,flag) {
+            var time;
+            return function(){
+                var self = this;
+                clearTimeout(time);
+                //设置flag一进来就执行，否则延迟执行
+                if(flag) {
+                    var callNow = !time;
+                    time = setTimeout(function(){
+                        time = null;//修改callNow
+                    },wait)
+                    if(callNow) {
+                        fn.apply(self);
+                    }
+                } else {
+                    time = setTimeout(function(){
+                        fn.apply(self);
+                    },wait)
+                }
+                
+            }
+        }
+
+        //节流
+        function throttle(fn, wait) {
+            var previous = 0;
+            return function() {
+                var self = this;
+                var now = +new Date();
+                if(now - previous > wait) {
+                    fn.apply(self);
+                    previous = now;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
